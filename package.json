@@ -1,0 +1,7 @@
+{
+  "name": "require-proxy-mock",
+  "version": "0.0.0",
+  "description": "Mock require calls using ES6 Proxy",
+  "main": "index.js",
+  "repository": "laggingreflex/require-proxy-mock"
+}
