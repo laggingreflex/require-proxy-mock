@@ -3,5 +3,8 @@
   "version": "0.1.0",
   "description": "Mock require calls using ES6 Proxy",
   "main": "index.js",
+  "engines": {
+    "node": ">=6"
+  },
   "repository": "laggingreflex/require-proxy-mock"
 }

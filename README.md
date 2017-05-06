@@ -4,6 +4,8 @@ Automatically and transparently patches all `require` calls ([Module._load]) to 
 
 Somewhat similar to [proxyquire], [rewire], and [Jest]'s [automock].
 
+**Requires node v6+**
+
 [Module._load]: https://github.com/nodejs/node/blob/47038242767c69a495ccf754246983c320352eb5/lib/module.js#L432
 [proxyquire]: https://github.com/thlorenz/proxyquire
 [rewire]: https://github.com/jhnns/rewire
