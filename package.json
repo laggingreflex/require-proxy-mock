@@ -1,6 +1,6 @@
 {
   "name": "require-proxy-mock",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Mock require calls using ES6 Proxy",
   "main": "index.js",
   "engines": {
