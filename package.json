@@ -6,5 +6,10 @@
   "engines": {
     "node": ">=6"
   },
-  "repository": "laggingreflex/require-proxy-mock"
+  "files": [],
+  "repository": "laggingreflex/require-proxy-mock",
+  "devDependencies": {
+    "mochista": "^0.11.0",
+    "require-up": "^0.4.0"
+  }
 }
