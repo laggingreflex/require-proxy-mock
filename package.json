@@ -2,11 +2,13 @@
   "name": "require-proxy-mock",
   "version": "0.1.1",
   "description": "Mock require calls using ES6 Proxy",
-  "main": "index.js",
+  "main": "mocks.js",
+  "scripts": {
+    "test": "mochista"
+  },
   "engines": {
     "node": ">=6"
   },
-  "files": [],
   "repository": "laggingreflex/require-proxy-mock",
   "devDependencies": {
     "mochista": "^0.11.0",

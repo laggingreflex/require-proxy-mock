@@ -1,1 +1,2 @@
 --require require-up
+--require ./register.js
