@@ -1,9 +1,3 @@
-# Doesn't work
-
-It turns out that this doesn't really work in complex situations as I had hoped. There's various issues highlighted in the code if anyone wants to take a crack at it. It's not usable as such in its current condition.
-
----
-
 # require-proxy-mock
 
 Automatically and transparently patches all `require` calls ([Module._load]) to return an [ES6 Proxy] wrapper around the original module's export(s) which can later be mocked/unmocked as required.
@@ -28,10 +22,10 @@ npm install --save-dev require-proxy-mock
 
 ## Usage
 
-Register once **before** loading any other modules:
+Require once **before** loading any other modules:
 
 ```sh
-mocha --require=require-proxy-mock/register  **/*.test.js
+mocha --require=require-proxy-mock  **/*.test.js
 ```
 
 Then require it as an object in your test(s) and add/remove properties on it with the same key names as the originally required files you want to mock:
@@ -45,15 +39,15 @@ import main from './main'
 describe('main', () => {
   before(() => {
 
-    // Mock exports from file required as '../to-be-mocked'
+    // Mock exports from file required (in main.js below) as 'some-lib'
 
-    mock['../to-be-mocked'] = { default: () => 1 };
+    mock['some-lib'] = { default: () => 1 };
 
     // Note: Using "default" because ES6 module
 
   })
   after(() => {
-    delete mock['../to-be-mocked']
+    delete mock['some-lib']
     // Restore original exports
   })
 
@@ -66,10 +60,11 @@ describe('main', () => {
 
 **`main.js`**
 
+No change required in this file
+
 ```js
-import toBeMocked from '../to-be-mocked' // mocked in test above
+import someLib from 'some-lib' // auto-mocked in test above
 
-export default main (..args) => toBeMocked(..args)
+export default (..args) => someLib(..args)
 ```
-
 
