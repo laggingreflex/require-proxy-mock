@@ -30,40 +30,32 @@ mocha --require require-proxy-mock **/*.test.js
 
 Then require it as an object in your test(s) and add/remove properties on it with the same key names as the originally required files you want to mock:
 
-**`main.test.js`**
+* **`main.js`** - A typical module file; no change required here
 
-```js
-import mock from 'require-proxy-mock'
-import main from './main'
+    ```js
+    const someLib = require('some-lib');
 
-describe('main', () => {
-  before(() => {
+    module.exports = someLib;
+    ```
 
-    // Mock exports from file required as '../to-be-mocked'
+* **`main.test.js`**
 
-    mock['../to-be-mocked'] = { default: () => 1 };
+    ```js
+    const mock = require('require-proxy-mock');
+    const main = require('./main');
 
-    // Note: Using "default" because ES6 module
+    describe('main', () => {
+      before(() => {
+        mock['some-lib'] = () => 1;
+      })
+      it('should mock', () => {
+        assert(main(), 1)
+      });
+      after(() => {
+        delete mock['some-lib']
+      })
+    });
 
-  })
-  after(() => {
-    delete mock['../to-be-mocked']
-    // Restore original exports
-  })
-
-  it('should mock', () => {
-    assert(main(), 1)
-  });
-});
-
-```
-
-**`main.js`**
-
-```js
-import toBeMocked from '../to-be-mocked' // mocked in test above
-
-export default main (..args) => toBeMocked(..args)
-```
+    ```
 
 

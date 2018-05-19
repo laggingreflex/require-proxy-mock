@@ -55,7 +55,7 @@ function requireProxyMockPatchLoad(request) {
     },
     construct(original, _args) {
       const cn = getMock();
-      return new(cn.bind.apply(cn, _args));
+      return Reflect.construct(cn, _args);
     },
     get(original, name) {
       const obj = getMock();
