@@ -54,9 +54,9 @@ module.exports = () => {
         const fn = getMock();
         return fn.apply(_this, _args);
       },
-      construct(original, _args) {
+      construct(original, _args, recv) {
         const cn = getMock();
-        return Reflect.construct(cn, _args);
+        return Reflect.construct(cn, _args, recv);
       },
       get(original, name) {
         const obj = getMock();
