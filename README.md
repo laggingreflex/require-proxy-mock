@@ -34,6 +34,8 @@ Then require it as an object in your test(s) and add/remove properties on it wit
 
     ```js
     const someLib = require('some-lib');
+    // Which exports a function like:
+    // () => 'original'
 
     module.exports = someLib;
     ```
@@ -41,18 +43,18 @@ Then require it as an object in your test(s) and add/remove properties on it wit
 * **`main.test.js`**
 
     ```js
-    const mock = require('require-proxy-mock');
+    const {mock} = require('require-proxy-mock');
     const main = require('./main');
 
     describe('main', () => {
       before(() => {
-        mock['some-lib'] = () => 1;
+        mock('some-lib', () => 'MY MOCK');
       })
       it('should mock', () => {
-        assert(main(), 1)
+        assert(main(), 'MY MOCK')
       });
       after(() => {
-        delete mock['some-lib']
+        unmock('some-lib')
       })
     });
 
