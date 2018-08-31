@@ -13,6 +13,9 @@ module.exports = () => {
   Module[flag] = true;
 
   function requireProxyMockPatchLoad(request) {
+
+    // const console = new Proxy(global.console, { get: (t, l) => (...m) => [''].find(_ => request.match(_) && global.console[l](...m)) })
+
     if (['require-proxy-mock'].includes(request)) return _load.apply(Module, arguments);
     let original, originalError;
     if (getMock()) {
