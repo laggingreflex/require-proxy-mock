@@ -1,76 +1,15 @@
-const mocks = require('./mocks');
+const patchedModuleLoad = require('./patched-module-load');
 
-const flag = Symbol('patched');
+const _load = Symbol(`Original _load patched by require-proxy-mock`);
 
 module.exports = () => {
   const Module = require('module');
 
-  if (Module[flag]) return;
+  if (Module[_load]) return;
+  Module[_load] = Module._load;
 
-  const _load = Module._load;
-  Module._load = requireProxyMockPatchLoad;
-
-  Module[flag] = true;
-
-  function requireProxyMockPatchLoad(request) {
-
-    // const console = new Proxy(global.console, { get: (t, l) => (...m) => [''].find(_ => request.match(_) && global.console[l](...m)) })
-
-    if (['require-proxy-mock'].includes(request)) return _load.apply(Module, arguments);
-    let original, originalError;
-    if (getMock()) {
-      try {
-        original = _load.apply(Module, arguments);
-      } catch (error) {
-        originalError = error;
-      }
-    } else {
-      original = _load.apply(Module, arguments);
-    }
-
-    function getMock() {
-      if (mocks.has(request)) {
-        return mocks.get(request);
-      }
-      for (const [req, mock] of mocks) {
-        if (!(req instanceof RegExp)) continue;
-        if (req.test(request)) return mock;
-      }
-      if (originalError) {
-        throw originalError;
-      } else {
-        return original;
-      }
-    }
-
-    if (['string',
-        'number',
-        'boolean',
-        'symbol'
-      ].indexOf(typeof original) > -1) {
-      // can't mock primitives
-      return original;
-    }
-
-    return new Proxy(original || {}, {
-      apply(original, _this, _args) {
-        const fn = getMock();
-        return fn.apply(_this, _args);
-      },
-      construct(original, _args, recv) {
-        const cn = getMock();
-        return Reflect.construct(cn, _args, recv);
-      },
-      get(original, name) {
-        const obj = getMock();
-        const mockedProp = obj[name];
-        if (typeof mockedProp !== 'undefined') {
-          return mockedProp;
-        } else {
-          return original[name];
-        }
-      },
-    });
+  Module._load = function requireProxyMockPatchLoad() {
+    const org = () => Module[_load].apply(this, arguments);
+    return patchedModuleLoad(org).apply(this, arguments);
   }
-
 }
