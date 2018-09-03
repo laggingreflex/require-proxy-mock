@@ -4,7 +4,9 @@ Automatically and transparently patches all `require` calls ([Module._load]) to 
 
 Somewhat similar to [proxyquire], [rewire], and [Jest]'s [automock].
 
-**Requires node v6+**
+**Requires Node v6+** (try 10+ if you're getting errors like [this][11629])
+
+[11629]: https://github.com/nodejs/node/issues/11629
 
 [Module._load]: https://github.com/nodejs/node/blob/47038242767c69a495ccf754246983c320352eb5/lib/module.js#L432
 [proxyquire]: https://github.com/thlorenz/proxyquire
@@ -22,6 +24,23 @@ npm install --save-dev require-proxy-mock
 
 ## Usage
 
+### API
+
+```js
+const { mock } = require('require-proxy-mock')
+```
+```js
+mock(dep, mock)
+mock({dep: mock, ...})
+mock(Map {dep => mock, ...})
+```
+* **`dep`** `[string|regex]` Require request of the dependency to mock.
+
+* **`mock`** Mock that replaces the required dependency.
+
+
+### Example
+
 **Important**: Require once **before** loading any other modules:
 
 ```sh
@@ -33,31 +52,39 @@ Then require it as an object in your test(s) and add/remove properties on it wit
 * **`main.js`** - A typical module file; no change required here
 
     ```js
-    const someLib = require('some-lib');
-    // Which exports a function like:
-    // () => 'original'
-
-    module.exports = someLib;
+    const someLib = require('some-lib')
+                             ^^^^^^^^ will be mocked
+    module.exports = someLib
     ```
+
+  * **`some-lib.js`** - Dependency that'll be mocked
+
+      ```js
+      module.exports = () => 'ORIGINAL'
+      ```
 
 * **`main.test.js`**
 
     ```js
-    const {mock} = require('require-proxy-mock');
-    const main = require('./main');
+    const {mock} = require('require-proxy-mock')
+    const main = require('./main')
 
     describe('main', () => {
+      let unmock
       before(() => {
-        mock('some-lib', () => 'MY MOCK');
+        unmock = mock('some-lib', () => 'CHANGED')
+                       ^^^^^^^^ mocked
       })
       it('should mock', () => {
-        assert(main(), 'MY MOCK')
-      });
-      after(() => {
-        unmock('some-lib')
+        assert(main(), 'CHANGED')
       })
-    });
-
+      after(() => {
+        unmock()
+      })
+    })
     ```
 
+## Limitations
+
+Cannot mock primitives (since they can't be proxied).
 
